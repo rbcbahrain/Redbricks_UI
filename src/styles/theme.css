@@ -1,0 +1,61 @@
+/* src/styles/theme.css */
+
+/* Default Light Theme */
+:root {
+  --primary: #FF6347;  /* Default light theme color */
+  --secondary: #32CD32;  /* Secondary color */
+  --background: #F0F8FF;  /* Light background */
+  --text: #333333;  /* Default text color */
+  --header-bg: #ffffff;  /* Light theme header background */
+  --footer-bg: #ffffff;  /* Light theme footer background */
+  --content-bg: #ffffff;  /* Light theme content background */
+  --form-bg: #ffffff;  /* Light theme form background */
+  --button-bg: #FF6347;  /* Button color for light theme */
+  --button-hover: #FF4500;  /* Button hover color for light theme */
+  --shadow: rgba(0, 0, 0, 0.1);  /* Default shadow */
+}
+
+/* Dark theme variables */
+.dark {
+  --primary: #1E40AF;
+  --secondary: #FFD700;
+  --background: #2C3E50;  /* Dark background color */
+  --text: #FFFFFF;
+  --header-bg: #333333;
+  --footer-bg: #333333;
+  --content-bg: #2C3E50;  /* Dark theme content background */
+  --form-bg: #2C3E50;  /* Dark theme form background */
+  --button-bg: #1E40AF;  /* Button color for dark theme */
+  --button-hover: #1A3578;  /* Button hover color for dark theme */
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+/* Blue theme variables */
+.blue {
+  --primary: #1D4ED8;
+  --secondary: #3B82F6;
+  --background: #E0F2FE;
+  --text: #1E3A8A;
+  --header-bg: #1E3A8A;
+  --footer-bg: #1E3A8A;
+  --content-bg: #E0F2FE;  /* Blue theme content background */
+  --form-bg: #1E3A8A;  /* Blue theme form background */
+  --button-bg: #3B82F6;
+  --button-hover: #1D4ED8;
+  --shadow: rgba(29, 78, 216, 0.3);
+}
+
+/* Green theme variables */
+.green {
+  --primary: #10B981;
+  --secondary: #34D399;
+  --background: #D1FAE5;
+  --text: #064E3B;
+  --header-bg: #064E3B;
+  --footer-bg: #064E3B;
+  --content-bg: #D1FAE5;  /* Green theme content background */
+  --form-bg: #064E3B;  /* Green theme form background */
+  --button-bg: #34D399;
+  --button-hover: #10B981;
+  --shadow: rgba(16, 185, 129, 0.3);
+}
