@@ -1,20 +1,65 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { useTheme } from '../context/ThemeContext';
-
+import { API_BASE_URL } from "../config";
 const RegisterForm = () => {
+  const navigate = useNavigate();
    const { theme, themeClasses } = useTheme(); // get theme and themeClasses from context
    const currentThemeClasses = themeClasses[theme] || {}; // get classes for current theme
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+ const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
-    }
+    } 
+
+     setLoading(true);
+
+    const payload = {
+      name,
+      email,
+      mobile, //`${countryCode}${mobile}`, // combined
+      password,
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/User/Create`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+console.log("Registering result:", result);
+      if (!response.ok) {
+        alert(result.message || "Registration failed!");
+        setLoading(false);
+        return;
+      }
+
+      alert("Registration successful!");
+        setLoading(false);
+     // Redirect to login page
+      navigate("/login");
+
+    
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Network error. Try again later.");
+      setLoading(false);
+    } 
+
+
     console.log("Registering with:", name, email, password);
   };
 
@@ -55,7 +100,22 @@ const RegisterForm = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
+        </div> 
+
+         {/* Mobile Number */}
+        <div>
+          <label htmlFor="mobile" className={`block text-sm font-medium mb-1 ${currentThemeClasses.text}`}>
+            Mobile
+          </label>
+          <input
+            id="mobile"
+            type="mobile"
+            className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${currentThemeClasses.inputBorder} ${currentThemeClasses.text}`}
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            required
+          />
+        </div> 
 
         {/* Password */}
         <div>

@@ -6,7 +6,8 @@ import './index.css';   // optional: your styles
 import { ThemeProvider } from './context/ThemeContext';
 import { UserProvider } from './context/UserContext';
 import { FormProvider } from './context/FormContext';
-import { CartProvider } from './context/CartContext';  
+import { CartProvider } from './context/CartContext'; 
+import { CategoryFormProvider } from './context/CategoryFormContext'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,7 +16,9 @@ root.render(
        <UserProvider>
         <FormProvider>
           <CartProvider>
+          <CategoryFormProvider>
            <App />
+           </CategoryFormProvider>
            </CartProvider>
         </FormProvider>
      

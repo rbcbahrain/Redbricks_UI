@@ -1,32 +1,42 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes,Route,Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { useTheme } from "./context/ThemeContext";
 import LoginForm from "./components/Loginform";
 import RegistrationForm from "./components/Registerform";
-import HomePage from "./components/HomePage"; // Optional home page
 import ForgotPasswordForm from "./components/ForgotPasswordform";
-import ServiceForm from "./components/ServiceForm";
-import CartPage from "./components/CartPage";
+
+import AdminRoutes from "./components/Route/AdminRoute";
+import UserRoutes from "./components/Route/CommonRoute";
+
 function App() {
   const { theme, themeClasses } = useTheme();
+
+  const role = localStorage.getItem("role"); // "admin" or "user"
 
   return (
     <Router>
       <div className={`App min-h-screen flex flex-col ${themeClasses[theme].body}`}>
-        <Header /> {/*Header section*/}
+
+        <Header />
 
         <main className="flex-1 p-6">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegistrationForm />} />
-             <Route path="/forgotpassword" element={<ForgotPasswordForm />} />
-              <Route path="/serviceform" element={<ServiceForm />} />
-               <Route path="/HomePage" element={<HomePage />} />
-                <Route path="/cart" element={<CartPage />} />
-          </Routes>
+<Routes>
+           {/* Public routes */}
+         
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegistrationForm />} />
+                <Route path="/forgotpassword" element={<ForgotPasswordForm />} />
+             
+         
+
+          {/* Admin private routes */}
+          {role === "Admin" && (<Route path="*" element={<AdminRoutes />}/>)}
+
+          {/* User private routes */}
+          {role === "user" && (<Route path="*" element={<UserRoutes />}/>)}
+</Routes>
         </main>
 
         <Footer />
