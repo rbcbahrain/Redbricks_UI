@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiLogIn,FiUser  } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
-
+import { API_BASE_URL } from "../config";
 
 const LoginForm = () => {
   const { theme, themeClasses } = useTheme(); // get theme and themeClasses from context
@@ -45,7 +45,7 @@ const navigate = useNavigate();
     setErrors({ email: '', password: '', api: '' }); // Clear previous API error
 
   try {
-    const url = `https://localhost:44372/api/User/checkuserexist?username=${email}&userpassword=${password}`;
+    const url = `${API_BASE_URL}/User/checkuserexist?username=${email}&userpassword=${password}`;
     const res = await fetch(url);
     const result = await res.json();
      console.log("Logging in result:", result.userId);

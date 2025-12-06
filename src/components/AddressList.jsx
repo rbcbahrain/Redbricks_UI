@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
-
+import { API_BASE_URL } from "../config";
 export default function AddressList({ userId, onSelect }) {
   const { theme } = useTheme();
   const [addresses, setAddresses] = useState([]);
@@ -11,7 +11,7 @@ export default function AddressList({ userId, onSelect }) {
     if (!userId) return;
 
     axios
-      .get(`https://localhost:44372/api/address/GetAddressesByUser/${userId}`)
+      .get(`${API_BASE_URL}/address/GetAddressesByUser/${userId}`)
       .then((res) => {
         // ensure res.data is an array
         if (Array.isArray(res.data)) {

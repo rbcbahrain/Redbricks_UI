@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
-
+import { API_BASE_URL } from "../config";
 export default function AddressForm({ userId, onSelect }) {
   const { theme } = useTheme();
 
@@ -38,7 +38,7 @@ export default function AddressForm({ userId, onSelect }) {
     console.log("Payload to be sent:", payload);
 
     const res = await axios.post(
-      "https://localhost:44372/api/Address/addAddress",
+      `${API_BASE_URL}/Address/addAddress`,
       payload,
       { headers: { "Content-Type": "application/json" } }
     );
