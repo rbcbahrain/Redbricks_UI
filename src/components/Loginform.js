@@ -4,6 +4,7 @@ import { FiMail, FiLock, FiLogIn,FiUser  } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
 
+
 const LoginForm = () => {
   const { theme, themeClasses } = useTheme(); // get theme and themeClasses from context
   const currentThemeClasses = themeClasses[theme] || {}; // get classes for current theme
@@ -44,7 +45,7 @@ const navigate = useNavigate();
     setErrors({ email: '', password: '', api: '' }); // Clear previous API error
 
   try {
-    const url = `https://localhost:7215/api/User/checkuserexist?username=${email}&userpassword=${password}`;
+    const url = `https://localhost:44372/api/User/checkuserexist?username=${email}&userpassword=${password}`;
     const res = await fetch(url);
     const result = await res.json();
      console.log("Logging in result:", result.userId);
@@ -52,8 +53,17 @@ const navigate = useNavigate();
       // Handle login success (e.g., redirect, store user info)
       // Redirect after successful login
       setUser(result);  // Save user info globally
-        //navigate('/');
-        navigate('/serviceform');
+      localStorage.setItem('role', "Admin");
+var role=localStorage.getItem('role');
+console.log("Role:"+role);
+ // Navigate based on role
+      if (role === 'Admin') {
+        navigate('/');
+              // navigate('/serviceform'); // Admin route
+      } else {
+               navigate('/'); // Normal user route (homepage)
+      }
+        //navigate('/serviceform');
         
     } else {
       // Handle login failure (show error)

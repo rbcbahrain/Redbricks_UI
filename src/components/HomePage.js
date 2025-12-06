@@ -4,6 +4,7 @@ import ServiceList from "../components/ServiceList";
 import ServiceDetails from "../components/ServiceDetails";
 import { categories, services } from "../data/serviceData";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { Image_BASE_URL } from "../config";
 
 export default function HomePage() {
 
@@ -63,6 +64,13 @@ export default function HomePage() {
         </ul>
       )}
     </div>
+
+ <img
+          src={`${Image_BASE_URL}/uploads/9bab0c29-20b7-4e0b-966a-d8f9e8861449.jpg`}
+          alt="Product"
+          width={250}
+        />
+
     </div>
   );
 }
