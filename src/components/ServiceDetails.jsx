@@ -15,7 +15,8 @@ export default function ServiceDetails({ service, onBack }) {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [address, setAddress] = useState("");
-  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [refreshAddresses, setRefreshAddresses] = useState(false);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -32,8 +33,7 @@ export default function ServiceDetails({ service, onBack }) {
 
   return (
     <div className={`max-w-lg mx-auto ${currentThemeClasses.body}`}>
-
-      {/* Back */}
+      {/* Back Button */}
       <button
         onClick={() => onBack?.() || navigate("/")}
         className={`mb-4 px-3 py-2 rounded font-semibold ${currentThemeClasses.button}`}
@@ -41,27 +41,26 @@ export default function ServiceDetails({ service, onBack }) {
         ← Back
       </button>
 
-      {/* Image */}
+      {/* Service Image */}
       <img
         src={service.image}
         alt={service.name}
         className="w-full h-64 object-cover rounded-md mb-4"
       />
 
-      {/* Title */}
+      {/* Service Info */}
       <h3 className={`text-3xl font-bold mb-2 ${currentThemeClasses.text}`}>
         {service.name}
       </h3>
-
-      <p className={currentThemeClasses.text}><strong>Price:</strong> ${service.price}</p>
+      <p className={currentThemeClasses.text}>
+        <strong>Price:</strong> ${service.price}
+      </p>
       <p className={`mb-4 ${currentThemeClasses.text}`}>
         <strong>Duration:</strong> {service.duration}
       </p>
 
       {/* Booking Form */}
       <form onSubmit={handleAddToCart} className="space-y-4">
-
-        {/* Name */}
         <input
           type="text"
           placeholder="Your Name"
@@ -71,7 +70,6 @@ export default function ServiceDetails({ service, onBack }) {
           required
         />
 
-        {/* Date */}
         <input
           type="date"
           value={date}
@@ -80,7 +78,6 @@ export default function ServiceDetails({ service, onBack }) {
           required
         />
 
-        {/* Location */}
         <select
           value={location}
           onChange={(e) => setLocation(e.target.value)}
@@ -92,51 +89,68 @@ export default function ServiceDetails({ service, onBack }) {
           <option value="Office">Office</option>
         </select>
 
-        {/* Address Section */}
-        <div>
-          <label className={`block mb-1 font-semibold ${currentThemeClasses.text}`}>
-            Address
-          </label>
+      
+      {/* Address Section */}
+<div className="mt-4">
+  <label className={`block mb-2 font-semibold ${currentThemeClasses.text}`}>
+    Address
+  </label>
 
-          <AddressList
-            userId={1}
-            onSelect={(addr) => {
-              setAddress(addr);
-              setShowAddressForm(false);
-            }}
-          />
+  {/* Dropdown for saved addresses */}
+  <AddressList
+    userId={1}
+    refresh={refreshAddresses}
+    onSelect={(addr) => setAddress(addr)}
+  />
 
-          {/* Add New Address */}
-          <button
-            type="button"
-            onClick={() => setShowAddressForm(!showAddressForm)}
-            className={`mt-2 px-3 py-2 rounded ${currentThemeClasses.button}`}
-          >
-            {showAddressForm ? "Cancel" : "Add New Address"}
-          </button>
+  {/* Selected Address Card */}
+  {address && (
+    <div className="mt-2 p-4 rounded-lg border border-gray-300 shadow-sm bg-white dark:bg-gray-700 dark:border-gray-600 hover:shadow-md transition-shadow duration-200">
+      <p className="text-gray-800 dark:text-gray-200 font-medium mb-1">
+        Selected Address
+      </p>
+      <p className="text-gray-700 dark:text-gray-300 truncate">{address}</p>
+    </div>
+  )}
 
-          {showAddressForm && (
-            <AddressForm
-              userId={1}
-              onSelect={(addr) => {
-                setAddress(addr);
-                setShowAddressForm(false);
-              }}
-            />
-          )}
+  {/* Add New Address Button */}
+  <button
+    type="button"
+    onClick={() => setShowAddressModal(true)}
+    className={`mt-3 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200`}
+  >
+    Add New Address
+  </button>
 
-          {/* Selected Address */}
-          <input
-            type="text"
-            placeholder="Selected Address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className={`w-full mt-3 px-3 py-2 border rounded ${currentThemeClasses.form}`}
-            required
-          />
-        </div>
+  {/* Add Address Modal */}
+  {showAddressModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
+          Add New Address
+        </h3>
 
-        {/* Submit */}
+        <AddressForm
+          userId={1}
+          onSelect={(newAddress) => {
+            setAddress(newAddress);                   // select new address
+            setShowAddressModal(false);               // close modal
+            setRefreshAddresses((prev) => !prev);    // refresh dropdown
+          }}
+        />
+
+        <button
+          onClick={() => setShowAddressModal(false)}
+          className="mt-4 px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500 transition-colors duration-200"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
+
         <button type="submit" className={currentThemeClasses.button}>
           Add To Cart
         </button>

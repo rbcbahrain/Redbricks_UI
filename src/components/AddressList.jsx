@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
 import { API_BASE_URL } from "../config";
-export default function AddressList({ userId, onSelect }) {
+
+export default function AddressList({ userId, onSelect, refresh }) {
   const { theme } = useTheme();
   const [addresses, setAddresses] = useState([]);
 
-  useEffect(() => {
+  const loadAddresses = () => {
     if (!userId) return;
 
     axios
-      .get(`${API_BASE_URL}/address/GetAddressesByUser/${userId}`)
+      .get(`${API_BASE_URL}/Address/Getaddresslist`)
       .then((res) => {
-        // ensure res.data is an array
         if (Array.isArray(res.data)) {
           setAddresses(res.data);
         } else {
@@ -25,36 +25,39 @@ export default function AddressList({ userId, onSelect }) {
         console.error("Error fetching addresses:", err);
         setAddresses([]);
       });
-  }, [userId]);
+  };
+
+  useEffect(() => {
+    loadAddresses();
+  }, [userId, refresh]); // reload on refresh trigger
 
   return (
     <div className="mt-2">
-      <h4 className="font-semibold mb-2">Saved Addresses</h4>
-
-      {addresses.length === 0 && (
-        <p className="text-sm opacity-70">No saved addresses yet.</p>
-      )}
-
-      {addresses.map((addr) => (
-        <div
-          key={addr.addressId}
-          onClick={() =>
-            onSelect(
-              `${addr.line1}, ${addr.line2}, ${addr.line3}, ${addr.city}, ${addr.country}`
-            )
-          }
-          className={`p-3 mb-2 border rounded cursor-pointer ${
-            theme === "dark"
-              ? "bg-gray-700 border-gray-500"
-              : "bg-gray-100 border-gray-300"
-          }`}
-        >
-          <p>{addr.line1} {addr.line2} {addr.line3}</p>
-          <p className="text-sm opacity-80">
-            {addr.city}, {addr.country}
-          </p>
-        </div>
-      ))}
+      <label className="block mb-1 font-semibold">Saved Addresses</label>
+      <select
+        className={`w-full px-3 py-2 border rounded ${
+          theme === "dark" ? "bg-gray-700 border-gray-500 text-white" : "bg-white border-gray-300"
+        }`}
+        onChange={(e) => onSelect(e.target.value)}
+        defaultValue=""
+      >
+        <option value="" disabled>
+          Select an address
+        </option>
+        {addresses.length === 0 && (
+          <option value="" disabled>
+            No saved addresses
+          </option>
+        )}
+        {addresses.map((addr) => (
+          <option
+            key={addr.addressId}
+            value={`${addr.line1}, ${addr.line2}, ${addr.line3}, ${addr.city}, ${addr.country}`}
+          >
+            {addr.line1} {addr.line2} {addr.line3}, {addr.city}, {addr.country}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

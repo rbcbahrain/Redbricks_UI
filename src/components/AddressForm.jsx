@@ -28,8 +28,8 @@ export default function AddressForm({ userId, onSelect }) {
       Line1: formData.line1,
       Line2: formData.line2,
       Line3: formData.line3,
-      City: parseInt(formData.city),       // ensure integer
-      Country: parseInt(formData.country), // ensure integer
+      City: 2,       // ensure integer
+      Country: 4, // ensure integer
       UserId: formData.userId,
       Location: formData.location
     };

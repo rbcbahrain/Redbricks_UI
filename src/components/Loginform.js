@@ -13,7 +13,7 @@ const navigate = useNavigate();
   const [password, setPassword] = useState('');
    const [errors, setErrors] = useState({ email: '', password: '', api: '' });
   const [loading, setLoading] = useState(false);
- const { setUser } = useContext(UserContext);
+ const { login } = useContext(UserContext);
 // email validation regex
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -52,13 +52,13 @@ const navigate = useNavigate();
     if (result && result.userId) {
       // Handle login success (e.g., redirect, store user info)
       // Redirect after successful login
-      setUser(result);  // Save user info globally
+      login(result);  // Save user info globally
       localStorage.setItem('role', "Admin");
 var role=localStorage.getItem('role');
 console.log("Role:"+role);
  // Navigate based on role
       if (role === 'Admin') {
-        navigate('/');
+        navigate('/ServiceHomePage');
               // navigate('/serviceform'); // Admin route
       } else {
                navigate('/'); // Normal user route (homepage)

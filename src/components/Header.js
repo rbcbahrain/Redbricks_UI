@@ -29,8 +29,7 @@ export default function Header() {
       {/* Navigation & Theme */}
       <div className="flex items-center gap-4">
         <nav className="flex gap-4 items-center">
-          <Link to="/HomePage" className="hover:underline">Home</Link>
-          <Link to="/contact" className="hover:underline">Contact</Link>
+        
 
           {user ? (
             <>
@@ -38,8 +37,10 @@ export default function Header() {
 
               {/* Admin-only link */}
               {role === "Admin" && (
-                <Link to="../serviceform" className="hover:underline">Service Form</Link>
+                <Link to="/ServiceHomePage" className="hover:underline">Home</Link>
               )}
+
+          
 
               <button
                 onClick={handleLogout}
@@ -49,7 +50,9 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <>
+            <> 
+            <Link to="/HomePage" className="hover:underline">Home</Link>
+                <Link to="/contact" className="hover:underline">Contact</Link>
               <Link to="/login" className="hover:underline">Login</Link>
               <Link to="/register" className="hover:underline">Register</Link>
             </>
