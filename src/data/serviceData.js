@@ -17,13 +17,13 @@ export const masterscreenlist = [
     id: 21,
     name: "Service Type",
     image: AC_Service,
-    link: "/serviceform",
+    link: "/typeform",
   },
   {
     id: 3,
     name: "Services",
     image: Plumber,
-    link:null,
+    link:"/serviceform",
   },
   {
     id: 4,

@@ -1,11 +1,12 @@
 import React,{useRef} from "react";
-import { useFormContext } from "../../context/CategoryFormContext";
+import { useCategoryContext } from "../../context/CategoryFormContext";
 import { useTheme } from "../../context/ThemeContext";
 import { API_BASE_URL } from "../../config";
 import axios from "axios";
+import { SweetAlert } from "../../Common/SweetAlert";
 
 const CategoryForm = () => {
-  const { form, updateForm, resetForm, createText, generateText } = useFormContext();
+  const { form, updateForm,  createText, generateText,resetForm } = useCategoryContext();
   const { currentThemeClasses } = useTheme();
 const fileRef = useRef(null);
 
@@ -23,24 +24,42 @@ const fileRef = useRef(null);
     const formData = new FormData();
   
     formData.append("name", form.name);
-    formData.append("desc", form.desc);
-  
+    formData.append("desc", form.desc);  
     formData.append("image", form.image);
 
     const summary = generateText();
+   
 
     try {
       await axios.post(`${API_BASE_URL}/ProductCategory/AddCategory`, formData, {
+         headers: {
+          "Content-Type": "multipart/form-data",
+        },
         
       });
+SweetAlert({
+  title: "Information",
+  body: `
+   <p>Category Created</p> 
+  `,
+   icon: "success",
+})
+.then(() => {
+  resetForm();
+  if (fileRef.current) fileRef.current.value = "";
+});
 
-      alert("Service created!\n\n" + summary);
- //resetForm();
-if(fileRef.current)fileRef.current.value="";
+
+
 
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Error uploading service.");
+      SweetAlert({
+  title: "Error",
+  body: "<p>"+(error.message)+"</p>",
+  icon: "error",
+  confirmText: "Close",
+});
     }
   };
 
@@ -52,7 +71,7 @@ if(fileRef.current)fileRef.current.value="";
     >
      
       <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Service Name:</label>
+        <label className={`block mb-1 ${currentThemeClasses.text}`}>Category Name:</label>
         <input
           type="text"
           name="name"
@@ -90,7 +109,7 @@ if(fileRef.current)fileRef.current.value="";
       </div>
 
       <button type="submit" className={currentThemeClasses.button}>
-        Create Service
+        Create Category
       </button>
 
       {createText && (

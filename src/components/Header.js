@@ -2,11 +2,14 @@ import React, { useContext } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { UserContext } from "../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useLang } from "../context/LanguageContext";
 
 export default function Header() {
   const { user, logout } = useContext(UserContext);
   const { theme, setTheme, themeClasses } = useTheme();
   const navigate = useNavigate();
+
+  const{t,lang,setLang}=useLang();
 
   const role = localStorage.getItem("role"); // "admin" or "user"
 
@@ -23,7 +26,7 @@ export default function Header() {
       {/* Logo */}
       <div className="flex items-center gap-2">
         <img src="/RedbricksLogo.png" alt="Logo" className="h-10" />
-        <span className="font-bold text-lg">RedBricks</span>
+        <span className="font-bold text-lg">{t.APP_COMPANY_NAME}</span>
       </div>
 
       {/* Navigation & Theme */}
@@ -33,11 +36,11 @@ export default function Header() {
 
           {user ? (
             <>
-              <span>Welcome, {user.name}</span>
+              <span>{t.HEADER_WELCOME}, {user.name}</span>
 
               {/* Admin-only link */}
               {role === "Admin" && (
-                <Link to="/ServiceHomePage" className="hover:underline">Home</Link>
+                <Link to="/ServiceHomePage" className="hover:underline">{t.HEADER_HOME}</Link>
               )}
 
           
@@ -46,15 +49,15 @@ export default function Header() {
                 onClick={handleLogout}
                 className="ml-4 px-3 py-1 border rounded hover:bg-gray-200"
               >
-                Logout
+                {t.HEADER_LOGOUT}
               </button>
             </>
           ) : (
             <> 
-            <Link to="/HomePage" className="hover:underline">Home</Link>
-                <Link to="/contact" className="hover:underline">Contact</Link>
-              <Link to="/login" className="hover:underline">Login</Link>
-              <Link to="/register" className="hover:underline">Register</Link>
+            <Link to="/HomePage" className="hover:underline">{t.HEADER_HOME}</Link>
+                <Link to="/contact" className="hover:underline">{t.HEADER_CONTACT}</Link>
+              <Link to="/login" className="hover:underline">{t.HEADER_LOGIN}</Link>
+              <Link to="/register" className="hover:underline">{t.HEADER_REGISTER}</Link>
             </>
           )}
         </nav>
@@ -65,11 +68,20 @@ export default function Header() {
           onChange={(e) => setTheme(e.target.value)}
           className="p-1 rounded border bg-white text-black"
         >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
-        </select>
+          <option value="light">{t.THEME_LIGHT}</option>
+          <option value="dark">{t.THEME_DARK}</option>
+          <option value="blue">{t.THEME_BLUE}</option>
+          <option value="green">{t.THEME_GREEN}</option>
+        </select> 
+
+  {/* Single toggle button */}
+  <button
+    onClick={() => setLang(lang === "en" ? "ar" : "en")}
+    className="px-3 py-1 border rounded hover:bg-gray-200"
+  >
+     {t.LANG_TOGGLE}
+  </button>
+
       </div>
     </header>
   );

@@ -1,0 +1,79 @@
+{
+  "APP_TITLE": "تطبيقي",
+ "APP_COMPANY_NAME":"ريدبريكس",
+ "HEADER_WELCOME": "مرحبًا",
+  "HEADER_HOME": "الرئيسية",
+  "HEADER_CONTACT": "اتصل بنا",
+  "HEADER_CART": "سلة التسوق",
+  "HEADER_LOGIN": "تسجيل الدخول",
+  "HEADER_REGISTER": "إنشاء حساب",
+  "HEADER_LOGOUT": "تسجيل الخروج",
+  "HEADER_LANGUAGE": "اللغة",
+
+    "THEME_LIGHT": "فاتح",
+  "THEME_DARK": "داكن",
+  "THEME_BLUE": "أزرق",
+  "THEME_GREEN": "أخضر",
+"LANG_TOGGLE": "EN",
+
+  "FOOTER_RIGHTS": "جميع الحقوق محفوظة",
+
+  "LOGIN_TITLE": "تسجيل الدخول",
+  "LOGIN_EMAIL": "البريد الإلكتروني",
+  "LOGIN_PASSWORD": "كلمة المرور",
+  "LOGIN_BUTTON": "تسجيل الدخول",
+  "LOGIN_FORGOT_PASSWORD": "هل نسيت كلمة المرور؟",
+
+  "REGISTER_TITLE": "إنشاء حساب",
+  "REGISTER_NAME": "الاسم",
+  "REGISTER_EMAIL": "البريد الإلكتروني",
+  "REGISTER_PASSWORD": "كلمة المرور",
+  "REGISTER_CONFIRM_PASSWORD": "تأكيد كلمة المرور",
+  "REGISTER_BUTTON": "إنشاء حساب",
+
+  "FORGOT_PASSWORD_TITLE": "نسيت كلمة المرور",
+  "FORGOT_PASSWORD_EMAIL": "البريد الإلكتروني",
+  "FORGOT_PASSWORD_BUTTON": "إرسال",
+
+  "CATEGORY_NAME_LABEL": "اسم التصنيف",
+  "CATEGORY_DESCRIPTION_LABEL": "الوصف",
+  "CATEGORY_IMAGE_LABEL": "الصورة",
+  "CATEGORY_CREATE_BUTTON": "إنشاء تصنيف",
+  "CATEGORY_CREATED_SUCCESS": "تم إنشاء التصنيف بنجاح",
+  "CATEGORY_UPDATED_SUCCESS": "تم تحديث التصنيف بنجاح",
+  "CATEGORY_DELETED_SUCCESS": "تم حذف التصنيف بنجاح",
+
+  "CART_TITLE": "سلة التسوق",
+  "CART_EMPTY": "سلة التسوق فارغة",
+  "CART_TOTAL": "الإجمالي",
+  "CART_CHECKOUT": "إتمام الشراء",
+
+  "ALERT_INFO_TITLE": "معلومة",
+  "ALERT_SUCCESS_TITLE": "نجاح",
+  "ALERT_ERROR_TITLE": "خطأ",
+  "ALERT_WARNING_TITLE": "تحذير",
+  "ALERT_CONFIRM_TITLE": "هل أنت متأكد؟",
+  "ALERT_CONFIRM_YES": "نعم",
+  "ALERT_CONFIRM_NO": "لا",
+  "ALERT_CLOSE_BUTTON": "إغلاق",
+  "ALERT_OPERATION_FAILED": "فشلت العملية",
+
+  "ERROR_REQUIRED_FIELD": "هذا الحقل مطلوب",
+  "ERROR_INVALID_EMAIL": "البريد الإلكتروني غير صالح",
+  "ERROR_PASSWORD_MISMATCH": "كلمتا المرور غير متطابقتين",
+  "ERROR_SERVER": "خطأ في الخادم، حاول لاحقاً",
+
+  "BUTTON_SAVE": "حفظ",
+  "BUTTON_CANCEL": "إلغاء",
+  "BUTTON_SUBMIT": "إرسال",
+  "BUTTON_LOADING": "جاري التحميل...",
+
+ 
+  "LOGIN_EMAIL_LABEL": "البريد الإلكتروني",
+  "LOGIN_EMAIL_PLACEHOLDER": "أدخل بريدك الإلكتروني",
+  "LOGIN_PASSWORD_LABEL": "كلمة المرور",
+  "LOGIN_PASSWORD_PLACEHOLDER": "أدخل كلمة المرور",
+  "LOGIN_SUBMIT_BUTTON": "تسجيل الدخول",
+  "LOGIN_NO_ACCOUNT": "ليس لديك حساب؟",
+  "LOGIN_REGISTER_LINK": "إنشاء حساب"
+}

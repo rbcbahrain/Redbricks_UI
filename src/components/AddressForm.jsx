@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
 import { API_BASE_URL } from "../config";
+import { SweetAlert } from "../Common/SweetAlert";
+
 export default function AddressForm({ userId, onSelect }) {
   const { theme } = useTheme();
 
@@ -47,7 +49,14 @@ export default function AddressForm({ userId, onSelect }) {
     const fullAddress = `${formData.line1}, ${formData.line2}, ${formData.line3}, ${formData.city}, ${formData.country}`;
     onSelect(fullAddress);
 
-    alert("Address saved!");
+  
+ SweetAlert({
+             title: "Information",
+             body: "<p>Address saved!</p>",
+             icon: "success",
+             confirmText: "ok",
+           });
+
     setFormData({
       line1: "",
       line2: "",
@@ -59,7 +68,13 @@ export default function AddressForm({ userId, onSelect }) {
     });
   } catch (error) {
     console.error("Error saving address:", error);
-    alert("Error saving address");
+    
+     SweetAlert({
+             title: "Error",
+             body: "<p>Error saving address</p>",
+             icon: "error",
+             confirmText: "close",
+           });
   }
 };
 
