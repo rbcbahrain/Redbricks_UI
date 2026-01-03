@@ -22,6 +22,14 @@ export default function ServiceDetails({ service, onBack }) {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [refreshAddresses, setRefreshAddresses] = useState(false);
 
+   // Get today's date in YYYY-MM-DD format
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+  const dd = String(today.getDate()).padStart(2, "0");
+
+  const minDate = `${yyyy}-${mm}-${dd}`; // e.g., "2026-01-03"
+
   const handleAddToCart = async (e) => {
     e.preventDefault();
 
@@ -95,7 +103,15 @@ export default function ServiceDetails({ service, onBack }) {
         <input
           type="date"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
+          min={minDate}
+          onChange={(e) =>{
+    const selectedDate = e.target.value; // YYYY-MM-DD
+    if (selectedDate < minDate) {
+      alert("Please select today or a future date");
+      setDate(minDate); // reset to today if invalid
+    } else {
+      setDate(selectedDate);
+    }}}
           className={`w-full px-3 py-2 border rounded ${currentThemeClasses.form}`}
           required
         />
