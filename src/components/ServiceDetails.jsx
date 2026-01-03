@@ -3,14 +3,18 @@ import React, { useState, useContext } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import { UserContext } from "../context/UserContext";
 import AddressForm from "./AddressForm";
 import AddressList from "./AddressList";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 export default function ServiceDetails({ service, onBack }) {
   const { currentThemeClasses } = useTheme();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
-
+  const{user}=useContext(UserContext);
+  const LoginUserID=user?.userId;
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
@@ -18,24 +22,42 @@ export default function ServiceDetails({ service, onBack }) {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [refreshAddresses, setRefreshAddresses] = useState(false);
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.preventDefault();
 
     if (!name || !date || !location || !address) {
+      alert(name);
+       alert(location);
+       alert(address);
       alert("Please fill all fields");
       return;
     }
+ const payload = {
+    userId: LoginUserID, // ⚠️ replace with logged-in user id
+    serviceId: service.id,
+    quantity: 1,
+    price: service.price,
+    addedAt: new Date().toISOString(),
+  };
+
+  try {
+    // ✅ Save to DB
+    await axios.post(`${API_BASE_URL}/Cart/AddCart`, payload);
 
     addToCart({ service, name, date, location, address });
     alert("Service added to cart!");
     navigate("/cart");
+    } catch (error) {
+    console.error("Error adding to cart:", error);
+    alert("Failed to add service to cart");
+  }
   };
 
   return (
     <div className={`max-w-lg mx-auto ${currentThemeClasses.body}`}>
       {/* Back Button */}
       <button
-        onClick={() => onBack?.() || navigate("/")}
+        onClick={() => onBack?.() || navigate("/HomePage")}
         className={`mb-4 px-3 py-2 rounded font-semibold ${currentThemeClasses.button}`}
       >
         ← Back
@@ -109,7 +131,8 @@ export default function ServiceDetails({ service, onBack }) {
       <p className="text-gray-800 dark:text-gray-200 font-medium mb-1">
         Selected Address
       </p>
-      <p className="text-gray-700 dark:text-gray-300 truncate">{address}</p>
+      <p className="text-gray-700 dark:text-gray-300 truncate">{address.line1} {address.line2} {address.line3}, {address.city}, {address.country}</p>
+    <input type="hidden" value={address.addressId} />
     </div>
   )}
 

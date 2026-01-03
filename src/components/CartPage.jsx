@@ -27,7 +27,7 @@ export default function CartPage() {
                 <div>
                   <h3 className="text-xl font-bold">{item.service.name}</h3>
                   <p>Date: {item.date}, Location: {item.location}</p>
-                  <p>Address: {item.address}</p>
+                  <p>Address: {item.address ? `${item.address.line1} ${item.address.line2} ${item.address.line3}, ${item.address.city}, ${item.address.country}` : "N/A"}</p>
                   <p className={`mt-2 font-semibold ${isDark ? "text-green-400" : "text-green-700"}`}>
                     Price: ${item.service.price}
                   </p>
