@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiLogIn,FiUser  } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
-
+import { API_BASE_URL } from "../config";
+import { SweetAlert } from "../Common/SweetAlert";
+import { useLang } from '../context/LanguageContext';
 
 const LoginForm = () => {
   const { theme, themeClasses } = useTheme(); // get theme and themeClasses from context
@@ -13,7 +15,8 @@ const navigate = useNavigate();
   const [password, setPassword] = useState('');
    const [errors, setErrors] = useState({ email: '', password: '', api: '' });
   const [loading, setLoading] = useState(false);
- const { setUser } = useContext(UserContext);
+ const { login } = useContext(UserContext);
+ const{t}=useLang();
 // email validation regex
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -45,26 +48,25 @@ const navigate = useNavigate();
     setErrors({ email: '', password: '', api: '' }); // Clear previous API error
 
   try {
-    const url = `https://localhost:44372/api/User/checkuserexist?username=${email}&userpassword=${password}`;
+    const url = `${API_BASE_URL}/User/checkuserexist?username=${email}&userpassword=${password}`;
     const res = await fetch(url);
     const result = await res.json();
      console.log("Logging in result:", result.userId);
     if (result && result.userId) {
       // Handle login success (e.g., redirect, store user info)
       // Redirect after successful login
-      setUser(result);  // Save user info globally
+      login(result);  // Save user info globally
       localStorage.setItem('role', "Admin");
 var role=localStorage.getItem('role');
 console.log("Role:"+role);
  // Navigate based on role
       if (role === 'Admin') {
-        navigate('/');
+        navigate('/ServiceHomePage');
               // navigate('/serviceform'); // Admin route
       } else {
                navigate('/'); // Normal user route (homepage)
       }
-        //navigate('/serviceform');
-        
+              
     } else {
       // Handle login failure (show error)
        setErrors(prev => ({ ...prev, api: 'Invalid username or password' }));
@@ -82,12 +84,12 @@ console.log("Role:"+role);
     <div className={`max-w-md mx-auto p-8 shadow-lg rounded-lg ${currentThemeClasses.form || 'bg-white'}`}>
       <h2 className="text-2xl font-semibold text-center mb-6 flex items-center justify-center gap-2">
   <FiUser className="text-xl" />
-  Login
+  {t.LOGIN_TITLE}
 </h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+          <label htmlFor="email" className="block text-sm font-medium mb-1">{t.LOGIN_EMAIL}</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <FiMail />
@@ -107,7 +109,7 @@ console.log("Role:"+role);
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
+          <label htmlFor="password" className="block text-sm font-medium mb-1">{t.LOGIN_PASSWORD}</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <FiLock />
@@ -127,7 +129,7 @@ console.log("Role:"+role);
            {/* Forgot Password Link */}
   <div className="text-right mt-1">
     <a href="/forgotpassword" className="text-sm hover:underline">
-      Forgot Password?
+     {t.LOGIN_FORGOT_PASSWORD}
     </a>
   </div>
         </div>
@@ -141,7 +143,7 @@ console.log("Role:"+role);
             className={`${currentThemeClasses.button}`}
           >
             <FiLogIn className="text-lg" />
-            Log In
+            {t.LOGIN_SUBMIT_BUTTON}
           </button>
         </div>
       </form>
@@ -149,9 +151,9 @@ console.log("Role:"+role);
       {/* Register Link */}
       <div className="mt-6 text-center">
         <p className="text-sm">
-          Don’t have an account?{' '}
+         {t.LOGIN_NO_ACCOUNT}{' '}
           <a href="/register" className="font-medium underline">
-            Register
+            {t.LOGIN_REGISTER_LINK}
           </a>
         </p>
       </div>

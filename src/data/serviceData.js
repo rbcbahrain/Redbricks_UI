@@ -6,6 +6,35 @@ import AC_Repair from '../assets/images/AC_Repair.png';
 import AC_Installation from '../assets/images/Split_AC.png';
 
 
+export const masterscreenlist = [
+  {
+    id: 1,
+    name: "Category",
+    image: CleaningImg,
+    link: "/categoryform",
+  },
+  {
+    id: 21,
+    name: "Service Type",
+    image: AC_Service,
+    link: "/typeform",
+  },
+  {
+    id: 3,
+    name: "Services",
+    image: Plumber,
+    link:"/serviceform",
+  },
+  {
+    id: 4,
+    name: "Upcoming",
+    image: Electrician,
+    link:null,
+  },
+];
+
+
+
 export const categories = [
   {
     id: 1,
@@ -100,4 +129,7 @@ export const services = {
         "https://images.unsplash.com/photo-1512446733611-9099a758e6db?auto=format&fit=crop&w=200&q=80",
     },
   ],
+
+
+
 };

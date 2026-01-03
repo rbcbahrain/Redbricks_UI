@@ -2,6 +2,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
+import { API_BASE_URL } from "../config";
+import { SweetAlert } from "../Common/SweetAlert";
 
 export default function AddressForm({ userId, onSelect }) {
   const { theme } = useTheme();
@@ -28,8 +30,8 @@ export default function AddressForm({ userId, onSelect }) {
       Line1: formData.line1,
       Line2: formData.line2,
       Line3: formData.line3,
-      City: parseInt(formData.city),       // ensure integer
-      Country: parseInt(formData.country), // ensure integer
+      City: 2,       // ensure integer
+      Country: 4, // ensure integer
       UserId: formData.userId,
       Location: formData.location
     };
@@ -38,7 +40,7 @@ export default function AddressForm({ userId, onSelect }) {
     console.log("Payload to be sent:", payload);
 
     const res = await axios.post(
-      "https://localhost:44372/api/Address/addAddress",
+      `${API_BASE_URL}/Address/addAddress`,
       payload,
       { headers: { "Content-Type": "application/json" } }
     );
@@ -47,7 +49,14 @@ export default function AddressForm({ userId, onSelect }) {
     const fullAddress = `${formData.line1}, ${formData.line2}, ${formData.line3}, ${formData.city}, ${formData.country}`;
     onSelect(fullAddress);
 
-    alert("Address saved!");
+  
+ SweetAlert({
+             title: "Information",
+             body: "<p>Address saved!</p>",
+             icon: "success",
+             confirmText: "ok",
+           });
+
     setFormData({
       line1: "",
       line2: "",
@@ -59,7 +68,13 @@ export default function AddressForm({ userId, onSelect }) {
     });
   } catch (error) {
     console.error("Error saving address:", error);
-    alert("Error saving address");
+    
+     SweetAlert({
+             title: "Error",
+             body: "<p>Error saving address</p>",
+             icon: "error",
+             confirmText: "close",
+           });
   }
 };
 

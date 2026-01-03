@@ -6,6 +6,8 @@ import { useTheme } from "./context/ThemeContext";
 import LoginForm from "./components/Loginform";
 import RegistrationForm from "./components/Registerform";
 import ForgotPasswordForm from "./components/ForgotPasswordform";
+import HomePage from "./components/HomePage";
+import CartPage from "./components/CartPage";
 
 import AdminRoutes from "./components/Route/AdminRoute";
 import UserRoutes from "./components/Route/CommonRoute";
@@ -24,12 +26,12 @@ function App() {
         <main className="flex-1 p-6">
 <Routes>
            {/* Public routes */}
-         
+          <Route path="/HomePage" element={<HomePage />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegistrationForm />} />
                 <Route path="/forgotpassword" element={<ForgotPasswordForm />} />
              
-         
+         <Route path="/cart" element={<CartPage />} />
 
           {/* Admin private routes */}
           {role === "Admin" && (<Route path="*" element={<AdminRoutes />}/>)}

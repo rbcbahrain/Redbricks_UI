@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useTheme } from '../context/ThemeContext';
 import { API_BASE_URL } from "../config";
+import { SweetAlert } from "../Common/SweetAlert";
+
 const RegisterForm = () => {
   const navigate = useNavigate();
    const { theme, themeClasses } = useTheme(); // get theme and themeClasses from context
@@ -16,7 +18,15 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+     
+ SweetAlert({
+             title: "Information",
+             body: "<p>Passwords do not match!</p>",
+             icon: "success",
+             confirmText: "ok",
+           });
+
+
       return;
     } 
 
@@ -41,12 +51,27 @@ const RegisterForm = () => {
       const result = await response.json();
 console.log("Registering result:", result);
       if (!response.ok) {
-        alert(result.message || "Registration failed!");
+ SweetAlert({
+             title: "Error",
+             body: "<p>"+(result.message || "Registration failed!")+"</p>",
+             icon: "error",
+             confirmText: "close",
+           });
+
+        
         setLoading(false);
         return;
       }
 
-      alert("Registration successful!");
+      
+ SweetAlert({
+             title: "Information",
+             body: "<p>Registration successful!</p>",
+             icon: "success",
+             confirmText: "ok",
+           });
+
+
         setLoading(false);
      // Redirect to login page
       navigate("/login");
@@ -55,7 +80,15 @@ console.log("Registering result:", result);
 
     } catch (error) {
       console.error("Error:", error);
-      alert("Network error. Try again later.");
+      
+ SweetAlert({
+             title: "Error",
+             body: "<p>Network error. Try again later.</p>",
+             icon: "errpr",
+             confirmText: "close",
+           });
+
+      
       setLoading(false);
     } 
 

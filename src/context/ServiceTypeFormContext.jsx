@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 
 // 1️⃣ Create context
-const CategoryContext = createContext();
+const ServiceTypeContext = createContext();
 
 // 2️⃣ Hook to use context
-export const useCategoryContext = () => useContext(CategoryContext);
+export const useServiceTypeContext = () => useContext(ServiceTypeContext);
 
 // 3️⃣ Initial state
 const initialState = {
@@ -14,7 +14,7 @@ const initialState = {
 };
 
 // 4️⃣ Provider component
-export const CategoryFormProvider = ({ children }) => {
+export const ServiceTypeFormProvider = ({ children }) => {
   const [form, setForm] = useState(initialState);
   const [createText, setCreateText] = useState("");
 
@@ -26,15 +26,14 @@ export const CategoryFormProvider = ({ children }) => {
   };
 
   const generateText = () => {
-    const summary = `Category "${form.name}".`;
-    console.log("Desc:+ `${form.description}`");
+    const summary = `ServiceType "${form.name}".`;
     setCreateText(summary);
     return summary;
   };
 
   // ✅ Use FormContext.Provider, not CategoryFormProvider.Provider
   return (
-    <CategoryContext.Provider
+    <ServiceTypeContext.Provider
       value={{
         form,
         updateForm,
@@ -44,6 +43,6 @@ export const CategoryFormProvider = ({ children }) => {
       }}
     >
       {children}
-    </CategoryContext.Provider>
+    </ServiceTypeContext.Provider>
   );
 };

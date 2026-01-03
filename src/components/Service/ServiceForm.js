@@ -1,12 +1,13 @@
 import React,{useRef} from "react";
-import { useFormContext } from "../../context/FormContext";
+import {useServiceFormContext} from "../../context/ServiceFormContext"
 import { useTheme } from "../../context/ThemeContext";
 import { categories } from "../../data/serviceData";
 import { API_BASE_URL } from "../../config";
 import axios from "axios";
+import { SweetAlert } from "../../Common/SweetAlert";
 
 const ServiceForm = () => {
-  const { form, updateForm, resetForm, createText, generateText } = useFormContext();
+  const { form, updateForm, resetForm, createText, generateText } = useServiceFormContext();
   const { currentThemeClasses } = useTheme();
 const fileRef = useRef(null);
 
@@ -24,25 +25,40 @@ const fileRef = useRef(null);
     const formData = new FormData();
     formData.append("type", form.categoryId);
     formData.append("name", form.name);
-    formData.append("desc", form.desc);
+    formData.append("description", form.description);
     formData.append("price", form.price);
-    formData.append("duration", form.duration);
+    formData.append("rating", form.rating);
     formData.append("image", form.image);
 
     const summary = generateText();
 
     try {
       await axios.post(`${API_BASE_URL}/Products/addproduct`, formData, {
-        
+         headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      alert("Service created!\n\n" + summary);
- resetForm();
-if(fileRef.current)fileRef.current.value="";
+    SweetAlert({
+      title: "Information",
+      body: `
+       <p>Category Created</p> 
+      `,
+       icon: "success",
+    })
+    .then(() => {
+      resetForm();
+      if (fileRef.current) fileRef.current.value = "";
+    });
 
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Error uploading service.");
+     SweetAlert({
+       title: "Error",
+       body: "<p>Error uploading service.</p>",
+       icon: "error",
+       confirmText: "Close",
+     });
     }
   };
 
@@ -86,8 +102,8 @@ if(fileRef.current)fileRef.current.value="";
         <label className={`block mb-1 ${currentThemeClasses.text}`}>Description:</label>
         <input
           type="text"
-          name="desc"
-          value={form.desc}
+          name="description"
+          value={form.description}
           onChange={handleChange}
           required
           className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
@@ -107,11 +123,11 @@ if(fileRef.current)fileRef.current.value="";
       </div>
 
       <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Duration:</label>
+        <label className={`block mb-1 ${currentThemeClasses.text}`}>Rating:</label>
         <input
           type="number"
-          name="duration"
-          value={form.duration}
+          name="rating"
+          value={form.rating}
           onChange={handleChange}
           required
           className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
