@@ -42,7 +42,7 @@ export default function Header() {
               {role === "Admin" && (
                 <Link to="/ServiceHomePage" className="hover:underline">{t.HEADER_HOME}</Link>
               )}
-
+               <Link to="/HomePage" className="hover:underline">{t.HEADER_SERVICES}</Link>
           
 
               <button
