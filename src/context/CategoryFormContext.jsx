@@ -9,8 +9,9 @@ export const useCategoryContext = () => useContext(CategoryContext);
 // 3️⃣ Initial state
 const initialState = {
   name: "",
-  desc: "",
+  description: "",
   image: null,
+  status:null,
 };
 
 // 4️⃣ Provider component
