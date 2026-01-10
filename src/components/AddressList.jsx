@@ -48,7 +48,7 @@ export default function AddressList({ userId, onSelect, refresh }) {
 
         {addresses.map(addr => (
           <option key={addr.addressId} value={addr.addressId}>
-            {addr.line1} {addr.line2} {addr.line3}, {addr.city}, {addr.country}
+            {addr.contactName}, {addr.city}, {addr.country}
           </option>
         ))}
       </select>
