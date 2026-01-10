@@ -9,7 +9,7 @@ export const useServiceTypeContext = () => useContext(ServiceTypeContext);
 // 3️⃣ Initial state
 const initialState = {
   name: "",
-  desc: "",
+  description: "",
   image: null,
 };
 
@@ -31,7 +31,7 @@ export const ServiceTypeFormProvider = ({ children }) => {
     return summary;
   };
 
-  // ✅ Use FormContext.Provider, not CategoryFormProvider.Provider
+
   return (
     <ServiceTypeContext.Provider
       value={{

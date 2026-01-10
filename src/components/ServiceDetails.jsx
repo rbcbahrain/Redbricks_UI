@@ -44,8 +44,9 @@ export default function ServiceDetails({ service, onBack }) {
     userId: LoginUserID, // ⚠️ replace with logged-in user id
     serviceId: service.id,
     quantity: 1,
-    price: service.price,
-    addedAt: new Date().toISOString(),
+    price: service.price, 
+    addressid:address.addressId,
+    servicedate:date,
   };
 
   try {

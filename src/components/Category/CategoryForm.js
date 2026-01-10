@@ -24,7 +24,7 @@ const fileRef = useRef(null);
     const formData = new FormData();
   
     formData.append("name", form.name);
-    formData.append("desc", form.desc);  
+    formData.append("description", form.desc);  
     formData.append("image", form.image);
 
     const summary = generateText();
