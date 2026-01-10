@@ -33,7 +33,7 @@ export const CategoryFormProvider = ({ children }) => {
     return summary;
   };
 
-  // ✅ Use FormContext.Provider, not CategoryFormProvider.Provider
+  
   return (
     <CategoryContext.Provider
       value={{
