@@ -117,17 +117,7 @@ export default function ServiceDetails({ service, onBack }) {
           required
         />
 
-        <select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className={`w-full px-3 py-2 border rounded ${currentThemeClasses.form}`}
-          required
-        >
-          <option value="">Select location</option>
-          <option value="Home">Home</option>
-          <option value="Office">Office</option>
-        </select>
-
+       
       
       {/* Address Section */}
 <div className="mt-4">
@@ -148,7 +138,7 @@ export default function ServiceDetails({ service, onBack }) {
       <p className="text-gray-800 dark:text-gray-200 font-medium mb-1">
         Selected Address
       </p>
-      <p className="text-gray-700 dark:text-gray-300 truncate">{address.line1} {address.line2} {address.line3}, {address.city}, {address.country}</p>
+      <p className="text-gray-700 dark:text-gray-300 truncate">{address.contactName},{address.line1} {address.line2} {address.line3}, {address.city}, {address.country},{address.contactNo}</p>
     <input type="hidden" value={address.addressId} />
     </div>
   )}

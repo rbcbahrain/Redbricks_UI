@@ -9,6 +9,8 @@ export default function AddressForm({ userId, onSelect }) {
   const { theme } = useTheme();
 
   const [formData, setFormData] = useState({
+    contactName:"",
+    contactNo:"",
     line1: "",
     line2: "",
     line3: "",
@@ -27,6 +29,8 @@ export default function AddressForm({ userId, onSelect }) {
 
   try {
     const payload = {
+contactName:formData.contactName,
+contactNo:formData.contactNo,
       Line1: formData.line1,
       Line2: formData.line2,
       Line3: formData.line3,
@@ -58,6 +62,8 @@ export default function AddressForm({ userId, onSelect }) {
            });
 
     setFormData({
+      contactName:"",
+      contactNo:"",
       line1: "",
       line2: "",
       line3: "",
@@ -87,7 +93,7 @@ export default function AddressForm({ userId, onSelect }) {
     >
       <h3 className="text-xl font-semibold mb-3">Add New Address</h3>
 
-      {["line1", "line2", "line3", "city", "country", "location"].map((field) => (
+      {["contactName","contactNo","line1", "line2", "line3", "city", "country", "location"].map((field) => (
         <input
           key={field}
           type="text"
