@@ -41,9 +41,10 @@ export default function Header() {
               {/* Admin-only link */}
               {role === "Admin" && (
                 <Link to="/ServiceHomePage" className="hover:underline">{t.HEADER_HOME}</Link>
-              )}
+                              )}
                <Link to="/HomePage" className="hover:underline">{t.HEADER_SERVICES}</Link>
           
+           <Link to="/cart" className="hover:underline">{t.HEADER_CART}</Link>
 
               <button
                 onClick={handleLogout}

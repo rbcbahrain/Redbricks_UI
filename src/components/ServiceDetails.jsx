@@ -8,6 +8,7 @@ import AddressForm from "./AddressForm";
 import AddressList from "./AddressList";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
+import { FiX } from "react-icons/fi";
 
 export default function ServiceDetails({ service, onBack }) {
   const { currentThemeClasses } = useTheme();
@@ -15,10 +16,8 @@ export default function ServiceDetails({ service, onBack }) {
   const { addToCart } = useContext(CartContext);
   const{user}=useContext(UserContext);
   const LoginUserID=user?.userId;
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [address, setAddress] = useState("");
+   const [date, setDate] = useState("");
+   const [address, setAddress] = useState("");
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [refreshAddresses, setRefreshAddresses] = useState(false);
 
@@ -33,10 +32,8 @@ export default function ServiceDetails({ service, onBack }) {
   const handleAddToCart = async (e) => {
     e.preventDefault();
 
-    if (!name || !date || !location || !address) {
-      alert(name);
-       alert(location);
-       alert(address);
+    if (!date || !address) {
+     
       alert("Please fill all fields");
       return;
     }
@@ -53,7 +50,7 @@ export default function ServiceDetails({ service, onBack }) {
     // ✅ Save to DB
     await axios.post(`${API_BASE_URL}/Cart/AddCart`, payload);
 
-    addToCart({ service, name, date, location, address });
+    addToCart({ service: { name: service.name, price: service.price }, date, address,quantity: 1 });
     alert("Service added to cart!");
     navigate("/cart");
     } catch (error) {
@@ -92,27 +89,24 @@ export default function ServiceDetails({ service, onBack }) {
 
       {/* Booking Form */}
       <form onSubmit={handleAddToCart} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={`w-full px-3 py-2 border rounded ${currentThemeClasses.form}`}
-          required
-        />
-
+      
         <input
           type="date"
           value={date}
           min={minDate}
           onChange={(e) =>{
+            setDate(e.target.value);
+          }}
+   
+     onBlur={(e) => {
+      
     const selectedDate = e.target.value; // YYYY-MM-DD
-    if (selectedDate < minDate) {
+
+    if (selectedDate && selectedDate < minDate) {
       alert("Please select today or a future date");
-      setDate(minDate); // reset to today if invalid
-    } else {
-      setDate(selectedDate);
-    }}}
+      setDate(minDate); // reset to today
+    }
+  }}
           className={`w-full px-3 py-2 border rounded ${currentThemeClasses.form}`}
           required
         />
@@ -147,7 +141,7 @@ export default function ServiceDetails({ service, onBack }) {
   <button
     type="button"
     onClick={() => setShowAddressModal(true)}
-    className={`mt-3 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200`}
+   className={`${currentThemeClasses.button} w-auto px-3 py-1 text-sm mt-4`}
   >
     Add New Address
   </button>
@@ -156,9 +150,20 @@ export default function ServiceDetails({ service, onBack }) {
   {showAddressModal && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
-        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
-          Add New Address
-        </h3>
+
+     <div className="flex items-center justify-between mb-3">
+  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+    Add New Address
+  </h3>
+
+  <button
+    onClick={() => setShowAddressModal(false)}
+    className={`${currentThemeClasses.dangerButton} w-auto px-3 py-1 text-sm`}
+    aria-label="Close"
+  >
+    <FiX className="text-lg" />
+  </button>
+</div>
 
         <AddressForm
           userId={1}
@@ -169,12 +174,6 @@ export default function ServiceDetails({ service, onBack }) {
           }}
         />
 
-        <button
-          onClick={() => setShowAddressModal(false)}
-          className="mt-4 px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500 transition-colors duration-200"
-        >
-          Close
-        </button>
       </div>
     </div>
   )}

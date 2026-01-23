@@ -1,17 +1,59 @@
 // src/pages/CartPage.jsx
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
+  const { cart, setCart, removeFromCart, updateQuantity } =
+    useContext(CartContext);
   const { theme } = useTheme();
-
   const isDark = theme === "dark";
 
-  // Total price calculation
+  const userId = 1; // TODO: replace with dynamic user ID
+
+  // Fetch cart items from API on page load
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:44372/api/Cart/GetCartItemslist?userId=${userId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart items");
+        }
+
+        const data = await response.json();
+  // Log the raw API response to console
+      console.log("Raw Cart API data:", data);
+        // Normalize data for React
+        const normalizedData = data.map((item) => ({
+          service: item.serviceName
+            ? { name: item.serviceName, price: item.price || 0 }
+            : { name: "Unnamed Service", price: item.price || 0 },
+          date: item.serviceDate
+            ? new Date(item.serviceDate).toLocaleDateString()
+            : "N/A",
+          location: "", // optional: map location if you have it
+          address: item.addressName || "N/A",
+          quantity: item.quantity || 1,
+        }));
+
+        setCart(normalizedData);
+      } catch (error) {
+        console.error("Cart API Error:", error);
+      }
+    };
+
+    fetchCart();
+  }, [userId, setCart]);
+
+  // Total price
   const totalPrice = cart
-    .reduce((sum, item) => sum + (item.service.price || 0) * (item.quantity || 1), 0)
+    .reduce(
+      (sum, item) => sum + (item.service?.price || 0) * (item.quantity || 1),
+      0
+    )
     .toFixed(2);
 
   return (
@@ -35,22 +77,22 @@ export default function CartPage() {
                 }`}
               >
                 <div>
-                  <h3 className="text-xl font-bold">{item.service.name}</h3>
-                  <p>Date: {item.date}, Location: {item.location}</p>
+                  <h3 className="text-xl font-bold">{item.service?.name}</h3>
+                  <p>
+                    Date: {item.date} | Location: {item.location || "N/A"}
+                  </p>
                   <p>
                     Address:{" "}
                     {item.address
-                      ? Object.values(item.address).filter(Boolean).join(", ")
+                      ? item.address
                       : "N/A"}
                   </p>
-
-                  {/* Price per item */}
                   <p
                     className={`mt-2 font-semibold ${
                       isDark ? "text-green-400" : "text-green-700"
                     }`}
                   >
-                    Price: ${item.service.price}
+                    Price: ${item.service?.price}
                   </p>
 
                   {/* Quantity Controls */}
@@ -61,20 +103,22 @@ export default function CartPage() {
                       }
                       className={`px-3 py-1 rounded ${
                         isDark
-                          ? "bg-gray-700 text-white hover:bg-gray-600"
+                          ? "bg-gray-700 hover:bg-gray-600"
                           : "bg-gray-200 hover:bg-gray-300"
                       }`}
                     >
                       -
                     </button>
+
                     <span className="px-2">{item.quantity || 1}</span>
+
                     <button
                       onClick={() =>
                         updateQuantity(idx, (item.quantity || 1) + 1)
                       }
                       className={`px-3 py-1 rounded ${
                         isDark
-                          ? "bg-gray-700 text-white hover:bg-gray-600"
+                          ? "bg-gray-700 hover:bg-gray-600"
                           : "bg-gray-200 hover:bg-gray-300"
                       }`}
                     >
@@ -83,11 +127,13 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                {/* Remove button */}
+                {/* Remove */}
                 <button
                   onClick={() => removeFromCart(idx)}
-                  className={`mt-4 sm:mt-0 px-4 py-2 rounded hover:opacity-80 transition ${
-                    isDark ? "bg-red-700 text-white" : "bg-red-600 text-white"
+                  className={`mt-4 sm:mt-0 px-4 py-2 rounded transition ${
+                    isDark
+                      ? "bg-red-700 hover:bg-red-600"
+                      : "bg-red-600 hover:bg-red-700"
                   }`}
                 >
                   Remove
@@ -96,18 +142,16 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Total & Checkout */}
+          {/* Total */}
           <div
             className={`border-t pt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between ${
               isDark ? "border-gray-700" : "border-gray-300"
             }`}
           >
-            <div className="mb-4 sm:mb-0 text-lg font-semibold">
-              Total: ${totalPrice}
-            </div>
+            <div className="text-lg font-semibold">Total: ${totalPrice}</div>
             <button
-              className="bg-blue-600 text-white px-6 py-3 rounded text-lg font-semibold hover:bg-blue-700 transition"
               onClick={() => alert("Proceeding to checkout...")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded text-lg font-semibold"
             >
               Proceed to Checkout
             </button>
