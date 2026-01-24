@@ -69,7 +69,7 @@ export const services = {
         "https://images.unsplash.com/photo-1581579187745-ec0e49f019ae?auto=format&fit=crop&w=200&q=80",
     },
     {
-      id: 102,
+      id: 3,
       name: "Deep Cleaning",
       price: 180,
       duration: "4 hours",

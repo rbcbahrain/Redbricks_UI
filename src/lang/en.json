@@ -9,7 +9,9 @@
   "HEADER_REGISTER": "Register",
   "HEADER_SERVICES": "Services",
   "HEADER_LOGOUT": "Logout",
-  "HEADER_LANGUAGE": "Language",
+   "HEADER_LANGUAGE": "Language",
+
+
   "LANG_TOGGLE": "عربي",
    "THEME_LIGHT": "Light",
   "THEME_DARK": "Dark",

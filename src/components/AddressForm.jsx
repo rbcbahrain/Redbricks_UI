@@ -6,8 +6,8 @@ import { API_BASE_URL } from "../config";
 import { SweetAlert } from "../Common/SweetAlert";
 
 export default function AddressForm({ userId, onSelect }) {
-  const { theme } = useTheme();
-
+  const { theme ,themeClasses} = useTheme();
+const currentThemeClasses = themeClasses[theme] || {}; // get classes for current theme
   const [formData, setFormData] = useState({
     contactName:"",
     contactNo:"",
@@ -91,8 +91,7 @@ contactNo:formData.contactNo,
         theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"
       }`}
     >
-      <h3 className="text-xl font-semibold mb-3">Add New Address</h3>
-
+      
       {["contactName","contactNo","line1", "line2", "line3", "city", "country", "location"].map((field) => (
         <input
           key={field}
@@ -108,7 +107,7 @@ contactNo:formData.contactNo,
       <button
         type="button"
         onClick={handleSubmit}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+         className={`${currentThemeClasses.button}`}
       >
         Save Address
       </button>
