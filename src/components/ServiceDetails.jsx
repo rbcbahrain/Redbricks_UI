@@ -50,7 +50,7 @@ export default function ServiceDetails({ service, onBack }) {
     // ✅ Save to DB
     await axios.post(`${API_BASE_URL}/Cart/AddCart`, payload);
 
-    addToCart({ service: { name: service.name, price: service.price }, date, address,quantity: 1 });
+    addToCart({ service: { name: service.name, price: service.price }, date, address:`${address.contactName}, ${address.line1}, ${address.city}, ${address.country}`,quantity: 1 });
     alert("Service added to cart!");
     navigate("/cart");
     } catch (error) {

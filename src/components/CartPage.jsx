@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
-
+import { API_BASE_URL } from "../config";
 export default function CartPage() {
   const { cart, setCart, removeFromCart, updateQuantity } =
     useContext(CartContext);
@@ -16,7 +16,7 @@ export default function CartPage() {
     const fetchCart = async () => {
       try {
         const response = await fetch(
-          `https://localhost:44372/api/Cart/GetCartItemslist?userId=${userId}`
+          `${API_BASE_URL}/Cart/GetCartItemslist?userId=${userId}`
         );
 
         if (!response.ok) {
@@ -34,9 +34,10 @@ export default function CartPage() {
           date: item.serviceDate
             ? new Date(item.serviceDate).toLocaleDateString()
             : "N/A",
-          location: "", // optional: map location if you have it
+          location: item.location, // optional: map location if you have it
           address: item.addressName || "N/A",
           quantity: item.quantity || 1,
+          cartItemId:item.cartItemId,
         }));
 
         setCart(normalizedData);
@@ -129,7 +130,7 @@ export default function CartPage() {
 
                 {/* Remove */}
                 <button
-                  onClick={() => removeFromCart(idx)}
+                  onClick={() => removeFromCart(item.cartItemId)}
                   className={`mt-4 sm:mt-0 px-4 py-2 rounded transition ${
                     isDark
                       ? "bg-red-700 hover:bg-red-600"
