@@ -31,13 +31,13 @@ export default function CartPage() {
           service: item.serviceName
             ? { name: item.serviceName, price: item.price || 0 }
             : { name: "Unnamed Service", price: item.price || 0 },
-          date: item.serviceDate
-            ? new Date(item.serviceDate).toLocaleDateString()
-            : "N/A",
+         date: item.serviceDate || null, 
           location: item.location, // optional: map location if you have it
           address: item.addressName || "N/A",
           quantity: item.quantity || 1,
           cartItemId:item.cartItemId,
+          serviceId:item.serviceId,
+          addressId:item.addressId,
         }));
 
         setCart(normalizedData);
@@ -56,6 +56,49 @@ export default function CartPage() {
       0
     )
     .toFixed(2);
+
+    const handleCheckout = async () => {
+  try {
+    for (const item of cart) {
+      // Only convert valid dates
+      const serviceDate = item.date && !isNaN(new Date(item.date))
+        ? new Date(item.date).toISOString()
+        : null;
+
+      // Map frontend cart to backend OrderItems model
+      const orderItem = {
+        OrderId: 0, // Replace with actual order ID if needed
+        ServiceId: item.serviceId || 0, // You must include ServiceId from your database
+        Quantity: item.quantity,
+        Price: item.service?.price || 0,
+        AddressId: item.addressId || 0, // Include AddressId from your database
+        AddressName: item.address,
+        ServiceDate: serviceDate, // ISO string
+      };
+
+      console.log("Posting OrderItem:", orderItem);
+
+      const response = await fetch(`${API_BASE_URL}/Order/AddOrderItem`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderItem),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API error:", errorText);
+        throw new Error(errorText);
+      }
+    }
+
+    alert("Order placed successfully ✅");
+    setCart([]); // clear cart after success
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Checkout failed ❌");
+  }
+};
+
 
   return (
     <div
@@ -80,7 +123,8 @@ export default function CartPage() {
                 <div>
                   <h3 className="text-xl font-bold">{item.service?.name}</h3>
                   <p>
-                    Date: {item.date} | Location: {item.location || "N/A"}
+                    Date: {item.date? new Date(item.date).toLocaleDateString()
+    : "N/A"} {" "} | Location: {item.location || "N/A"}
                   </p>
                   <p>
                     Address:{" "}
@@ -151,7 +195,7 @@ export default function CartPage() {
           >
             <div className="text-lg font-semibold">Total: ${totalPrice}</div>
             <button
-              onClick={() => alert("Proceeding to checkout...")}
+              onClick={handleCheckout}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded text-lg font-semibold"
             >
               Proceed to Checkout
