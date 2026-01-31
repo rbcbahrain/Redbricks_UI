@@ -59,26 +59,23 @@ export default function CartPage() {
 
     const handleCheckout = async () => {
   try {
-    for (const item of cart) {
-      // Only convert valid dates
-      const serviceDate = item.date && !isNaN(new Date(item.date))
-        ? new Date(item.date).toISOString()
-        : null;
+   
 
       // Map frontend cart to backend OrderItems model
       const orderItem = {
-        OrderId: 0, // Replace with actual order ID if needed
-        ServiceId: item.serviceId || 0, // You must include ServiceId from your database
-        Quantity: item.quantity,
-        Price: item.service?.price || 0,
-        AddressId: item.addressId || 0, // Include AddressId from your database
-        AddressName: item.address,
-        ServiceDate: serviceDate, // ISO string
+        // OrderId: 0, // Replace with actual order ID if needed
+        // ServiceId:  0, // You must include ServiceId from your database
+        // Quantity: 0,
+        // Price:  0,
+        // AddressId:  0, // Include AddressId from your database
+        // AddressName: item.address,
+        // ServiceDate: serviceDate, // ISO string
+        UserId: userId,
       };
 
       console.log("Posting OrderItem:", orderItem);
 
-      const response = await fetch(`${API_BASE_URL}/Order/AddOrderItem`, {
+      const response = await fetch(`${API_BASE_URL}/Order/CheckOut`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderItem),
@@ -88,7 +85,7 @@ export default function CartPage() {
         const errorText = await response.text();
         console.error("API error:", errorText);
         throw new Error(errorText);
-      }
+      
     }
 
     alert("Order placed successfully ✅");

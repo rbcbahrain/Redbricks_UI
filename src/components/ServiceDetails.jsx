@@ -44,13 +44,14 @@ export default function ServiceDetails({ service, onBack }) {
     price: service.price, 
     addressid:address.addressId,
     servicedate:date,
+    location: address.location,
   };
 
   try {
     // ✅ Save to DB
     await axios.post(`${API_BASE_URL}/Cart/AddCart`, payload);
 
-    addToCart({ service: { name: service.name, price: service.price }, date, address:`${address.contactName}, ${address.line1}, ${address.city}, ${address.country}`,quantity: 1 });
+    addToCart({ service: { name: service.name, price: service.price },location:`${address.location}`, date, address:`${address.contactName}, ${address.line1}, ${address.city}, ${address.country}`,quantity: 1 });
     alert("Service added to cart!");
     navigate("/cart");
     } catch (error) {
