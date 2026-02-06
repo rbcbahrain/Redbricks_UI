@@ -11,6 +11,7 @@ const initialState = {
   name: "",
   description: "",
   image: null,
+  status:null,
 };
 
 // 4️⃣ Provider component
