@@ -9,7 +9,8 @@ export default function CartPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const userId = 1; // TODO: replace with dynamic user ID
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId = storedUser.userId; // TODO: replace with dynamic user ID
 
   // Fetch cart items from API on page load
   useEffect(() => {
@@ -78,7 +79,7 @@ export default function CartPage() {
 
       console.log("Posting OrderItem:", orderItem);
 
-      const response = await fetch(`${API_BASE_URL}/Order/AddOrderItem`, {
+      const response = await fetch(`${API_BASE_URL}/Order/CheckOut`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderItem),

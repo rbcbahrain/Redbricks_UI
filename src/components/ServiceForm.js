@@ -65,7 +65,26 @@ const ServiceForm = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> 
+
+  <div className="mb-4">
+        <label className={`block mb-1 ${currentThemeClasses.text}`}>Category:</label>
+        <select
+          name="categoryId"
+          value={form.categoryId}
+          onChange={handleChange}
+          required
+          className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
+        >
+          <option value="">-- Select --</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+      </div> 
+
 
       <div className="mb-4">
         <label className={`block mb-1 ${currentThemeClasses.text}`}>Service Name:</label>
