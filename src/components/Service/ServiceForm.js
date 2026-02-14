@@ -5,12 +5,12 @@ import { categories } from "../../data/serviceData";
 import { API_BASE_URL } from "../../config";
 import axios from "axios";
 import { SweetAlert } from "../../Common/SweetAlert";
-
+import { useNavigate } from "react-router-dom";
 const ServiceForm = () => {
   const { form, updateForm, resetForm, createText, generateText } = useServiceFormContext();
   const { currentThemeClasses } = useTheme();
 const fileRef = useRef(null);
-
+const navigate = useNavigate();
   const handleChange = (e) => {
     updateForm(e.target.name, e.target.value);
   };
@@ -63,6 +63,18 @@ const fileRef = useRef(null);
   };
 
   return (
+     <div>
+    {/* CLICKABLE HOME */}
+    <div className="mb-4 text-sm text-gray-600">
+      <span
+        className="text-blue-600 cursor-pointer hover:underline"
+        onClick={() => navigate("/ServiceHomePage")}
+      >
+        🏠 Home
+      </span>
+      <span className="mx-1">&gt;</span>
+      <span>Service</span>
+    </div>
     <form
       onSubmit={handleSubmit}
       encType="multipart/form-data"
@@ -178,6 +190,7 @@ const fileRef = useRef(null);
         </div>
       )}
     </form>
+    </div>
   );
 };
 

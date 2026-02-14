@@ -11,7 +11,7 @@ export const masterscreenlist = [
     id: 1,
     name: "Category",
     image: CleaningImg,
-    link: "/categoryform",
+    link: "/CategoryList",
   },
   {
     id: 21,

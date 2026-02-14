@@ -9,7 +9,7 @@ export const useCategoryContext = () => useContext(CategoryContext);
 // 3️⃣ Initial state
 const initialState = {
   name: "",
-  description: "",
+  desc: "",
   image: null,
   status:null,
 };
