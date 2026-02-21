@@ -62,13 +62,26 @@ const CategoryList = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl">Category List</h2>
-        <button className={`${currentThemeClasses.button}`} onClick={handleAddNew}>
-          + Add New Category
-        </button>
-      </div>
+    <div className="p-6 border rounded-lg shadow-md">
+             {/* Header */}
+ <div className="flex justify-between items-center mb-4">
+  {/* Title centered horizontally */}
+  <div className="flex-1 flex justify-center">
+    <h2 className="text-xl font-semibold whitespace-nowrap">
+      Category List
+    </h2>
+  </div>
+
+  {/* Button aligned to right */}
+  <div className="flex-1 flex justify-end">
+    <button
+      className={`${currentThemeClasses.button} text-xs px-4 py-2 w-auto inline-block`}
+      onClick={handleAddNew}
+    >
+      + Add
+    </button>
+  </div>
+</div>
 
       <table className={`w-full border ${currentThemeClasses.inputBorder}`}>
         <thead>

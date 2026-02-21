@@ -1,24 +1,54 @@
-import React,{useRef} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useServiceTypeContext } from "../../context/ServiceTypeFormContext";
 import { useTheme } from "../../context/ThemeContext";
-import { API_BASE_URL } from "../../config";
+import { API_BASE_URL, Image_BASE_URL } from "../../config";
 import { categories } from "../../data/serviceData";
 import axios from "axios";
-import {SweetAlert} from "../../Common/SweetAlert";
+import { SweetAlert } from "../../Common/SweetAlert";
 import { useNavigate } from "react-router-dom";
 
 const ServiceTypeForm = () => {
-  const { form, updateForm, createText, generateText,resetForm } = useServiceTypeContext();
+  const { form, updateForm, createText, generateText, resetForm } =
+    useServiceTypeContext();
+
   const { currentThemeClasses } = useTheme();
-const fileRef = useRef(null);
-const navigate = useNavigate();
+  const fileRef = useRef(null);
+  const navigate = useNavigate();
+
+  const [preview, setPreview] = useState(null);
+
+  // Handle text/select changes
   const handleChange = (e) => {
     updateForm(e.target.name, e.target.value);
   };
 
+  // Handle image change
   const handleFileChange = (e) => {
-    updateForm("image", e.target.files[0]);
+    const file = e.target.files[0];
+
+    if (file) {
+      updateForm("image", file);
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+    }
   };
+
+  // Prevent memory leak
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
+  // Reset when switching to Create mode
+  useEffect(() => {
+    if (!form.id) {
+      resetForm();
+      setPreview(null);
+    }
+  }, [form.id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,126 +56,187 @@ const navigate = useNavigate();
     const formData = new FormData();
     formData.append("categoryId", form.categoryId);
     formData.append("name", form.name);
-    formData.append("desc", form.desc);  
-    formData.append("image", form.image);
-
-    const summary = generateText();
+    formData.append("fileName", form.fileName);
+    formData.append("description", form.desc);
+      // If new image selected
+    if (form.image) {
+      formData.append("image", form.image);
+    }
+    // If editing and keeping old image
+    else if (form.fileName) {
+      formData.append("fileName", form.fileName);
+    }
 
     try {
-      await axios.post(`${API_BASE_URL}/ProductType/AddType`, formData, {
-        
-      });
+      if (form.id) {
+        // UPDATE
+        await axios.put(
+          `${API_BASE_URL}/ProductType/UpdateType/${form.id}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
 
-      SweetAlert({
-           title: "Information",
-           body: `
-            <p>Category Created</p> 
-           `,
-            icon: "success",
-         })
-         .then(() => {
-           resetForm();
-           if (fileRef.current) fileRef.current.value = "";
-         });
-     
+        SweetAlert({
+          title: "Updated",
+          body: "<p>Service Type updated successfully.</p>",
+          icon: "success",
+        });
+      } else {
+        // CREATE
+        await axios.post(
+          `${API_BASE_URL}/ProductType/AddType`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        SweetAlert({
+          title: "Created",
+          body: "<p>Service Type created successfully.</p>",
+          icon: "success",
+        });
+      }
+
+      generateText(); // Optional if needed
+      resetForm();
+      setPreview(null);
+      if (fileRef.current) fileRef.current.value = "";
+      navigate("/ServiceTypeList");
 
     } catch (error) {
-      console.error("Upload error:", error);
-       SweetAlert({
-             title: "Error",
-             body: "<p>Error uploading service.</p>",
-             icon: "error",
-             confirmText: "Close",
-           });
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        error.message ||
+        "Something went wrong";
+
+      SweetAlert({
+        title: "Error",
+        body: `<p>${errorMessage}</p>`,
+        icon: "error",
+        confirmText: "Close",
+      });
     }
   };
 
   return (
-      <div>
-    {/* CLICKABLE HOME */}
-    <div className="mb-4 text-sm text-gray-600">
-      <span
-        className="text-blue-600 cursor-pointer hover:underline"
-        onClick={() => navigate("/ServiceHomePage")}
+    <div>
+      {/* Breadcrumb */}
+      <div className="mb-4 text-sm text-gray-600">
+        <span
+          className="text-blue-600 cursor-pointer hover:underline"
+          onClick={() => navigate("/ServiceHomePage")}
+        >
+          🏠 Home
+        </span>
+        <span className="mx-1">&gt;</span>
+        <span>{form.id ? "Edit Service Type" : "Create Service Type"}</span>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className={`p-6 rounded shadow ${currentThemeClasses.form}`}
       >
-        🏠 Home
-      </span>
-      <span className="mx-1">&gt;</span>
-      <span>Service Type</span>
-    </div>
-    <form
-      onSubmit={handleSubmit}
-      encType="multipart/form-data"
-      className={`p-6 rounded shadow ${currentThemeClasses.form}`}
-    >
-     <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Category:</label>
-        <select
-          name="categoryId"
-          value={form.categoryId}
-          onChange={handleChange}
-          required
-          className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-        >
-          <option value="">-- Select --</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Service Type Name:</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Description:</label>
-        <input
-          type="text"
-          name="desc"
-          value={form.desc}
-          onChange={handleChange}
-          required
-          className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-        />
-      </div>
-
-
-      <div className="mb-4">
-        <label className={`block mb-1 ${currentThemeClasses.text}`}>Image:</label>
-        <input
-          type="file"
-          ref={fileRef}
-          name="image"
-          onChange={handleFileChange}
-          accept="image/*"
-          required
-          className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-        />
-      </div>
-
-      <button type="submit" className={currentThemeClasses.button}>
-        Create Service Type
-      </button>
-
-      {createText && (
-        <div
-          className={`mt-6 p-4 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text}`}
-        >
-          <h4 className="font-semibold mb-2">Generated Text:</h4>
-          <p>{createText}</p>
+        {/* Category */}
+        <div className="mb-4">
+          <label className={`block mb-1 ${currentThemeClasses.text}`}>
+            Category:
+          </label>
+          <select
+            name="categoryId"
+            value={form.categoryId}
+            onChange={handleChange}
+            required
+            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
+          >
+            <option value="">-- Select --</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
-    </form>
+
+        {/* Name */}
+        <div className="mb-4">
+          <label className={`block mb-1 ${currentThemeClasses.text}`}>
+            Service Type Name:
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
+          />
+        </div>
+
+        {/* Description */}
+        <div className="mb-4">
+          <label className={`block mb-1 ${currentThemeClasses.text}`}>
+            Description:
+          </label>
+          <input
+            type="text"
+            name="desc"
+            value={form.desc}
+            onChange={handleChange}
+            required
+            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
+          />
+        </div>
+
+        {/* Image */}
+        <div className="mb-4">
+          <label className={`block mb-1 ${currentThemeClasses.text}`}>
+            Image:
+          </label>
+
+          {/* New Preview */}
+          {preview && (
+            <div className="mb-2">
+              <img src={preview} width="100" alt="Preview" />
+            </div>
+          )}
+
+          {/* Existing Image (Edit Mode) */}
+          {!preview && form.fileName && (
+            <div className="mb-2">
+              <img
+                src={`${Image_BASE_URL}${form.fileName}`}
+                width="100"
+                alt="Current"
+              />
+            </div>
+          )}
+
+          <input
+            type="file"
+            ref={fileRef}
+            name="image"
+            onChange={handleFileChange}
+            accept="image/*"
+            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
+          />
+        </div>
+
+        {/* Submit */}
+        <button type="submit" className={currentThemeClasses.button}>
+          {form.id ? "Update Service Type" : "Create Service Type"}
+        </button>
+
+        {/* Generated Text */}
+        {createText && (
+          <div
+            className={`mt-6 p-4 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text}`}
+          >
+            <h4 className="font-semibold mb-2">Generated Text:</h4>
+            <p>{createText}</p>
+          </div>
+        )}
+      </form>
     </div>
   );
 };
