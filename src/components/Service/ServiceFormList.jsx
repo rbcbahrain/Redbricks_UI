@@ -74,7 +74,7 @@ const ServiceList = () => {
       if (result.isConfirmed) {
         try {
           await axios.delete(
-            `${API_BASE_URL}/Products/deleteproduct/${refval}`
+            `${API_BASE_URL}/Products/Deleteproduct/${refval}`
           );
 
           SweetAlert({
@@ -97,18 +97,20 @@ const ServiceList = () => {
 
   // Edit
   const handleEdit = (service) => {
-    updateForm("id", service.id);
-    updateForm("categoryId", service.categoryId);
-    updateForm("serviceTypeId", service.serviceTypeId);
-    updateForm("name", service.name);
-    updateForm("description", service.description);
-    updateForm("price", service.price);
-    updateForm("rating", service.rating);
-    updateForm("fileName", service.fileName);
-    updateForm("image", null);
+  updateForm("id", service.productId);
 
-    navigate("/ServiceForm");
-  };
+  // 🔥 THIS is the key fix
+  updateForm("typeId", service.typeId);
+
+  updateForm("name", service.name);
+  updateForm("description", service.description);
+  updateForm("price", service.price);
+  updateForm("rating", service.rating);
+  updateForm("fileName", service.fileName);
+  updateForm("image", null);
+
+  navigate("/ServiceForm");
+};
 
   const handleAddNew = () => {
     resetForm();
@@ -168,7 +170,7 @@ const ServiceList = () => {
         </thead>
         <tbody>
           {paginatedData.map((srv) => (
-            <tr key={srv.id}>
+            <tr key={srv.productId}>
               <td className="border px-4 py-2">{srv.name}</td>
               <td className="border px-4 py-2">{srv.price}</td>
               <td className="border px-4 py-2">{srv.rating}</td>
@@ -191,7 +193,7 @@ const ServiceList = () => {
                 <button
                   className={`${currentThemeClasses.button} bg-red-600 hover:bg-red-700`}
                   onClick={() =>
-                    handleDelete(srv.typeId, srv.fileName?.split("/").pop())
+                    handleDelete(srv.productId, srv.fileName?.split("/").pop())
                   }
                 >
                   Delete

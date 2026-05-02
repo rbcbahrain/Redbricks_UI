@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useServiceFormContext } from "../../context/ServiceFormContext";
 import { useTheme } from "../../context/ThemeContext";
-import { categories } from "../../data/serviceData";
 import { API_BASE_URL, Image_BASE_URL } from "../../config";
 import axios from "axios";
 import { SweetAlert } from "../../Common/SweetAlert";
@@ -15,274 +14,183 @@ const ServiceForm = () => {
   const fileRef = useRef(null);
   const navigate = useNavigate();
 
+  const [allServiceTypes, setAllServiceTypes] = useState([]);
   const [preview, setPreview] = useState(null);
 
-  // Handle text/select change
-  const handleChange = (e) => {
-    updateForm(e.target.name, e.target.value);
-  };
-
-  // Handle image change
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      updateForm("image", file);
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-    }
-  };
-
-  // Cleanup preview (prevent memory leak)
+  // Load Service Types
   useEffect(() => {
-    return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
+    const fetchServiceTypes = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/Products/LoadProductType`
+        );
+
+        const data = response.data?.data || response.data || [];
+        setAllServiceTypes(data);
+      } catch (error) {
+        console.error("Error loading service types:", error);
       }
     };
+
+    fetchServiceTypes();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "price" || name === "rating") {
+      updateForm(name, value === "" ? "" : Number(value));
+    } else if (name === "type") {
+      updateForm(name, Number(value)); // 🔥 important
+    } else {
+      updateForm(name, value);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      updateForm("image", file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  useEffect(() => {
+    return () => preview && URL.revokeObjectURL(preview);
   }, [preview]);
 
-  // Reset preview when switching to create mode
   useEffect(() => {
-    if (!form.id) {
-      resetForm();
-      setPreview(null);
-    }
+    if (!form.id) setPreview(null);
   }, [form.id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("categoryId", form.categoryId);
-    formData.append("serviceTypeId", form.serviceTypeId);
-    formData.append("name", form.name);
-    formData.append("description", form.description);
-    formData.append("price", form.price);
-    formData.append("rating", form.rating);
+ const formData = new FormData();
 
-    if (form.image) {
-      formData.append("image", form.image);
-    } else if (form.fileName) {
+formData.append("TypeId", form.typeId);
+formData.append("Name", form.name || "");
+formData.append("Description", form.description || "");
+formData.append("Price", form.price ? Number(form.price) : 0);
+formData.append("Rating", form.rating ? Number(form.rating) : 0);
+
+if (form.image) {
+  formData.append("Image", form.image); // ✅ FIXED
+}    // If editing and keeping old image
+    else if (form.fileName) {
       formData.append("fileName", form.fileName);
     }
 
     try {
       if (form.id) {
-        // UPDATE
         await axios.put(
           `${API_BASE_URL}/Products/updateproduct/${form.id}`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          formData
         );
-
-        SweetAlert({
-          title: "Updated",
-          body: "<p>Service updated successfully.</p>",
-          icon: "success",
-        });
       } else {
-        // CREATE
-        await axios.post(
-          `${API_BASE_URL}/Products/addproduct`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-
-        SweetAlert({
-          title: "Created",
-          body: "<p>Service created successfully.</p>",
-          icon: "success",
-        });
+        await axios.post(`${API_BASE_URL}/Products/AddProduct`, formData);
       }
 
-      generateText(); // optional if needed
+      SweetAlert({
+        title: form.id ? "Updated" : "Created",
+        body: `<p>Service ${
+          form.id ? "updated" : "created"
+        } successfully.</p>`,
+        icon: "success",
+      });
+
       resetForm();
       setPreview(null);
       if (fileRef.current) fileRef.current.value = "";
+
       navigate("/ServiceList");
-
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data ||
-        error.message ||
-        "Something went wrong";
-
       SweetAlert({
         title: "Error",
-        body: `<p>${errorMessage}</p>`,
+        body: `<p>${
+          error.response?.data?.message || error.message
+        }</p>`,
         icon: "error",
-        confirmText: "Close",
       });
     }
   };
 
   return (
     <div>
-      {/* Breadcrumb */}
-      <div className="mb-4 text-sm text-gray-600">
-        <span
-          className="text-blue-600 cursor-pointer hover:underline"
-          onClick={() => navigate("/ServiceHomePage")}
+      <form onSubmit={handleSubmit} className={`p-6 ${currentThemeClasses.form}`}>
+        
+        {/* TYPE */}
+        <select
+          name="typeId"
+          value={form.typeId ?? ""}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded mb-4"
         >
-          🏠 Home
-        </span>
-        <span className="mx-1">&gt;</span>
-        <span>{form.id ? "Edit Service" : "Create Service"}</span>
-      </div>
+          <option value="">-- Select --</option>
+          {allServiceTypes.map((serv) => (
+            <option key={serv.typeId} value={serv.typeId}>
+              {serv.name}
+            </option>
+          ))}
+        </select>
 
-      <form
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
-        className={`p-6 rounded shadow ${currentThemeClasses.form}`}
-      >
-        {/* Category */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Category:
-          </label>
-          <select
-            name="categoryId"
-            value={form.categoryId}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          >
-            <option value="">-- Select --</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* NAME */}
+        <input
+          type="text"
+          name="name"
+          value={form.name || ""}
+          onChange={handleChange}
+          placeholder="Name"
+          className="w-full p-2 border rounded mb-4"
+        />
 
-        {/* Service Type */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Service Type:
-          </label>
-          <select
-            name="serviceTypeId"
-            value={form.serviceTypeId}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          >
-            <option value="">-- Select --</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* DESCRIPTION */}
+        <input
+          type="text"
+          name="description"
+          value={form.description || ""}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full p-2 border rounded mb-4"
+        />
 
-        {/* Name */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Service Name:
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          />
-        </div>
+        {/* PRICE */}
+        <input
+          type="number"
+          name="price"
+          value={form.price || ""}
+          onChange={handleChange}
+          placeholder="Price"
+          className="w-full p-2 border rounded mb-4"
+        />
 
-        {/* Description */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Description:
-          </label>
-          <input
-            type="text"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          />
-        </div>
+        {/* RATING */}
+        <input
+          type="number"
+          name="rating"
+          value={form.rating || ""}
+          onChange={handleChange}
+          placeholder="Rating"
+          className="w-full p-2 border rounded mb-4"
+        />
 
-        {/* Price */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Price:
-          </label>
-          <input
-            type="number"
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          />
-        </div>
-
-        {/* Rating */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Rating:
-          </label>
-          <input
-            type="number"
-            name="rating"
-            value={form.rating}
-            onChange={handleChange}
-            required
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          />
-        </div>
-
-        {/* Image */}
-        <div className="mb-4">
-          <label className={`block mb-1 ${currentThemeClasses.text}`}>
-            Image:
-          </label>
-
-          {preview && (
-            <div className="mb-2">
-              <img src={preview} width="100" alt="Preview" />
-            </div>
-          )}
-
-          {!preview && form.fileName && (
-            <div className="mb-2">
-              <img
-                src={`${Image_BASE_URL}${form.fileName}`}
-                width="100"
-                alt="Current"
-              />
-            </div>
-          )}
-
-          <input
-            type="file"
-            ref={fileRef}
-            name="image"
-            onChange={handleFileChange}
-            accept="image/*"
-            className={`w-full p-2 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text} bg-transparent`}
-          />
-        </div>
-
-        <button type="submit" className={currentThemeClasses.button}>
-          {form.id ? "Update Service" : "Create Service"}
-        </button>
-
-        {createText && (
-          <div
-            className={`mt-6 p-4 border rounded ${currentThemeClasses.inputBorder} ${currentThemeClasses.text}`}
-          >
-            <h4 className="font-semibold mb-2">Generated Text:</h4>
-            <p>{createText}</p>
-          </div>
+        {/* IMAGE */}
+        {preview && <img src={preview} width="100" alt="preview" />}
+        {!preview && form.fileName && (
+          <img src={`${Image_BASE_URL}${form.fileName}`} width="100" />
         )}
+
+        <input
+          type="file"
+          ref={fileRef}
+          onChange={handleFileChange}
+          className="mb-4"
+        />
+
+        <button className={currentThemeClasses.button}>
+          {form.id ? "Update" : "Create"}
+        </button>
       </form>
     </div>
   );

@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import { useServiceTypeContext } from "../../context/ServiceTypeFormContext";
 import { useTheme } from "../../context/ThemeContext";
 import { API_BASE_URL, Image_BASE_URL } from "../../config";
-import { categories } from "../../data/serviceData";
 import axios from "axios";
 import { SweetAlert } from "../../Common/SweetAlert";
 import { useNavigate } from "react-router-dom";
@@ -14,13 +13,29 @@ const ServiceTypeForm = () => {
   const { currentThemeClasses } = useTheme();
   const fileRef = useRef(null);
   const navigate = useNavigate();
-
+  const [categories, setCategories] = useState([]);
   const [preview, setPreview] = useState(null);
 
   // Handle text/select changes
   const handleChange = (e) => {
     updateForm(e.target.name, e.target.value);
   };
+  
+useEffect(() => {
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/ProductType/LoadCategory`
+      );
+
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+    }
+  };
+
+  fetchCategories();
+}, []);
 
   // Handle image change
   const handleFileChange = (e) => {
